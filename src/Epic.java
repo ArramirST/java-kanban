@@ -15,6 +15,9 @@ public class Epic extends Task {
     public void addSubtasks(Subtask subtask) {
         this.subtasks.add(subtask);
     }
+    public void removeSubtasks() {
+        this.subtasks.clear();
+    }
 
     @Override
     public boolean equals(Object o) {
