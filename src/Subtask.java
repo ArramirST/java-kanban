@@ -1,18 +1,17 @@
 import java.util.Objects;
 
 public class Subtask extends Task {
-    private String type = "Subtask";
-    private int attachment;
+    private int epicId;
     public Subtask(String name, String description) {
         super(name, description);
     }
 
     public int getAttachment() {
-        return attachment;
+        return epicId;
     }
 
     public void setAttachment(int attachment) {
-        this.attachment = attachment;
+        this.epicId = attachment;
     }
 
     @Override
@@ -20,19 +19,19 @@ public class Subtask extends Task {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Subtask subtask = (Subtask) o;
-        return type.equals(subtask.type) && name.equals(subtask.name) && description.equals(subtask.description)
+        return name.equals(subtask.name) && description.equals(subtask.description)
                 && status.equals(subtask.status);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(type, name, description, status);
+        return Objects.hash(name, description, status);
     }
 
     @Override
     public String toString() {
         return "Task{" +
-                "type='" + type + '\'' +
+                "type='" + "Subtask" + '\'' +
                 ", name='" + name + '\'' +
                 ", description.length='" + description.length() + '\'' +
                 ", status='" + status + '\'' +

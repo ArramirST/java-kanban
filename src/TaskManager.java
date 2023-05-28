@@ -1,4 +1,6 @@
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Objects;
 
 public class TaskManager {
@@ -18,7 +20,7 @@ public class TaskManager {
     public void addTask(Task task) {
         for (Integer key : tasks.keySet()) {
             if (tasks.get(key).equals(task)) {
-                break;
+                return;
             }
         }
         tasks.put(identifier(), task);
@@ -26,7 +28,7 @@ public class TaskManager {
     public void addEpic(Epic epic) {
         for (Integer key : epics.keySet()) {
             if (epics.get(key).equals(epic)) {
-                break;
+                return;
             }
         }
         epics.put(identifier(), epic);
@@ -34,7 +36,7 @@ public class TaskManager {
     public void addSubtask(Subtask subtask, String epicName) {
         for (Integer key : subtasks.keySet()) {
             if (subtasks.get(key).equals(subtask)) {
-                break;
+                return;
             }
         }
         subtasks.put(identifier(), subtask);
@@ -78,23 +80,39 @@ public class TaskManager {
         }
     }
 
-    public String getList() {
-        String list = "";
+    public List<String> getTaskList() {
+        List<String> list = new ArrayList<>();
         for (Task value : tasks.values()) {
-            list += (value.getName()+"\n");
+            list.add(value.getName());
         }
+        return list;
+    }
+    public List<String> getEpicList() {
+        List<String> list = new ArrayList<>();
         for (Epic value : epics.values()) {
-            list += (value.getName()+"\n");
+            list.add(value.getName());
         }
+        return list;
+    }
+    public List<String> getSubtaskList() {
+        List<String> list = new ArrayList<>();
         for (Subtask value : subtasks.values()) {
-            list += (value.getName()+"\n");
+            list.add(value.getName());
         }
         return list;
     }
     public void removeTasks() {
         tasks.clear();
-        subtasks.clear();
+    }
+    public void removeEpics() {
+        for (Integer key : epics.keySet()) {
+            epics.get(key).removeSubtasks();
+        }
         epics.clear();
+        subtasks.clear();
+    }
+    public void removeSubtasks() {
+        subtasks.clear();
     }
     public int getTaskKey(String name) {
             for (Integer key : tasks.keySet()) {
@@ -120,11 +138,17 @@ public class TaskManager {
                 return tasks.get(key);
             }
         }
+        return null;
+    }
+    public Task getEpic(int identifier) {
         for (Integer key : epics.keySet()) {
             if (key == identifier) {
                 return epics.get(key);
             }
         }
+        return null;
+    }
+    public Task getSubtask(int identifier) {
         for (Integer key : subtasks.keySet()) {
             if (key == identifier) {
                 return subtasks.get(key);
@@ -133,31 +157,26 @@ public class TaskManager {
         return null;
     }
     public void removeTask(int identifier) {
-        for (Integer key : tasks.keySet()) {
-            if (key == identifier) {
-                tasks.remove(identifier);
-                break;
-            }
-        }
-        for (Integer key : epics.keySet()) {
-            if (key == identifier) {
-                epics.remove(identifier);
-                break;
-            }
-        }
-        for (Integer key : subtasks.keySet()) {
-            if (key == identifier) {
-                subtasks.remove(identifier);
-                break;
-            }
-        }
+        tasks.remove(identifier);
     }
-    public String getEpicList(String name) {
-        String list = "";
+    public void removeEpic(int identifier) {
+        for (Integer id : subtasks.keySet()) {
+            if (subtasks.get(id).getAttachment()==identifier) {
+                subtasks.remove(id);
+            }
+        }
+        epics.get(identifier).removeSubtasks();
+        epics.remove(identifier);
+    }
+    public void removeSubtask(int identifier) {
+        subtasks.remove(identifier);
+    }
+    public List getEpicSubtasksList(String name) {
+        List<String> list = new ArrayList<>();
         for (Integer key : epics.keySet()) {
             if (epics.get(key).getName().equals(name)) {
                 for (Subtask subtask : epics.get(key).getSubtasks()) {
-                    list += (subtask.getName() + "\n");
+                    list.add(subtask.getName());
                 }
             }
         }

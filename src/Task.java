@@ -1,7 +1,7 @@
 import java.util.Objects;
 
-public class Task {
-    private String type = "Task";
+public class Task {             //Уникальный идентификационным номером задачи,
+                                // по которой ее можно будет найти, является ключ хэшмапы (identifier)
     protected String name;
     protected String description;
     protected String status = "NEW";
@@ -11,9 +11,6 @@ public class Task {
         this.description = description;
     }
 
-    public String getType() {
-        return type;
-    }
 
     public String getStatus() {
         return status;
@@ -36,18 +33,18 @@ public class Task {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Task task = (Task) o;
-        return type.equals(task.type) && name.equals(task.name) && description.equals(task.description) && status.equals(task.status);
+        return name.equals(task.name) && description.equals(task.description) && status.equals(task.status);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(type, name, description, status);
+        return Objects.hash(name, description, status);
     }
 
     @Override
     public String toString() {
         return "Task{" +
-                "type='" + type + '\'' +
+                "type='" + "Task" + '\'' +
                 ", name='" + name + '\'' +
                 ", description.length='" + description.length() + '\'' +
                 ", status='" + status + '\'' +
