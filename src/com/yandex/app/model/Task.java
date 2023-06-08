@@ -1,10 +1,12 @@
+package com.yandex.app.model;
+
 import java.util.Objects;
 
-public class Task {             //Уникальный идентификационным номером задачи,
-                                // по которой ее можно будет найти, является ключ хэшмапы (identifier)
+public class Task {
     protected String name;
     protected String description;
     protected String status = "NEW";
+    protected int identifier;
 
     public Task(String name, String description) {
         this.name = name;
@@ -26,6 +28,14 @@ public class Task {             //Уникальный идентификаци�
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public int getIdentifier() {
+        return identifier;
+    }
+
+    public void setIdentifier(int identifier) {
+        this.identifier = identifier;
     }
 
     @Override

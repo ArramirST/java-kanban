@@ -1,3 +1,10 @@
+package com.yandex.app;
+
+import com.yandex.app.model.Epic;
+import com.yandex.app.model.Subtask;
+import com.yandex.app.model.Task;
+import com.yandex.app.service.TaskManager;
+
 import java.util.Scanner;
 
 public class Main {
@@ -41,9 +48,9 @@ public class Main {
                     taskManager.addTask(task);
                     break;
                 case 5:
-                    taskManager.changeEpic(epic, "IN_PROGRESS");
-                    taskManager.changeTask(task, "IN_PROGRESS");
-                    taskManager.changeSubtask(subTask, "IN_PROGRESS");
+                    taskManager.updateEpic(epic, "IN_PROGRESS");
+                    taskManager.updateTask(task, "IN_PROGRESS");
+                    taskManager.updateSubtask(subTask, "IN_PROGRESS");
                     break;
                 case 6:
                     taskManager.removeSubtask(taskManager.getTaskKey("Спринт 3"));

@@ -1,21 +1,23 @@
+package com.yandex.app.model;
+
 import java.util.ArrayList;
 import java.util.Objects;
 
 public class Epic extends Task {
-    private ArrayList<Subtask> subtasks = new ArrayList<>();
+    private ArrayList<Integer> subtasksId = new ArrayList<>();
     public Epic(String name, String description) {
         super(name, description);
     }
 
-    public ArrayList<Subtask> getSubtasks() {
-        return subtasks;
+    public ArrayList<Integer> getSubtasks() {
+        return subtasksId;
     }
 
-    public void addSubtasks(Subtask subtask) {
-        this.subtasks.add(subtask);
+    public void addSubtasksId(Integer identifier) {
+        this.subtasksId.add(identifier);
     }
-    public void removeSubtasks() {
-        this.subtasks.clear();
+    public void removeSubtasksId() {
+        this.subtasksId.clear();
     }
 
     @Override
@@ -24,12 +26,12 @@ public class Epic extends Task {
         if (o == null || getClass() != o.getClass()) return false;
         Epic epic = (Epic) o;
         return name.equals(epic.name) && description.equals(epic.description)
-                && status.equals(epic.status)&& subtasks.equals(epic.subtasks);
+                && status.equals(epic.status)&& subtasksId.equals(epic.subtasksId);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, description, status, subtasks);
+        return Objects.hash(name, description, status, subtasksId);
     }
 
     @Override
@@ -38,7 +40,7 @@ public class Epic extends Task {
                 ", name='" + name + '\'' +
                 ", description.length='" + description.length() + '\'' +
                 ", status='" + status + '\'' +
-                ", subtasks='" + subtasks + '\'' +
+                ", subtasksId='" + subtasksId + '\'' +
                 '}';
     }
 
