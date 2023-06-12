@@ -1,11 +1,13 @@
 package com.yandex.app.model;
 
+import com.yandex.app.service.Status;
+
 import java.util.Objects;
 
 public class Task {
     protected String name;
     protected String description;
-    protected String status = "NEW";
+    protected Status status = Status.NEW;
     protected int identifier;
 
     public Task(String name, String description) {
@@ -14,7 +16,7 @@ public class Task {
     }
 
 
-    public String getStatus() {
+    public Status getStatus() {
         return status;
     }
 
@@ -26,7 +28,7 @@ public class Task {
         return description;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(Status status) {
         this.status = status;
     }
 

@@ -3,7 +3,7 @@ package com.yandex.app;
 import com.yandex.app.model.Epic;
 import com.yandex.app.model.Subtask;
 import com.yandex.app.model.Task;
-import com.yandex.app.service.TaskManager;
+import com.yandex.app.service.*;
 
 import java.util.Scanner;
 
@@ -11,54 +11,53 @@ public class Main {
 
     public static void main(String[] args) {
 
-        TaskManager taskManager = new TaskManager();
+        TaskManager inMemoryTaskManager = Managers.getDefault();
         Scanner scanner = new Scanner(System.in);
         Subtask subTask = new Subtask("Спринт 3", "Выполнить до вечера");
         Epic epic = new Epic("Учеба", "Нужно учиться");
-        taskManager.addEpic(epic);
-        taskManager.addSubtask(subTask, "Учеба");
+        inMemoryTaskManager.addEpic(epic);
+        inMemoryTaskManager.addSubtask(subTask, "Учеба");
         subTask = new Subtask("Спринт 4", "Выполнить до конца недели");
         Task task = new Task("Домашние дела", "Помыть посуду");
         int choice;
-        String type;
-        int status;
         while (true) {
             printMenu();
             choice = scanner.nextInt();
             switch (choice) {
                 case 1:
-                    System.out.println(taskManager.getTaskList());
-                    System.out.println(taskManager.getEpicList());
-                    System.out.println(taskManager.getSubtaskList());
+                    System.out.println(inMemoryTaskManager.getTaskList());
+                    System.out.println(inMemoryTaskManager.getEpicList());
+                    System.out.println(inMemoryTaskManager.getSubtaskList());
                     break;
                 case 2:
-                    taskManager.removeTasks();
-                    taskManager.removeEpics();
-                    taskManager.removeSubtasks();
+                    inMemoryTaskManager.removeTasks();
+                    inMemoryTaskManager.removeEpics();
+                    inMemoryTaskManager.removeSubtasks();
                     break;
                 case 3:
-                    System.out.println(taskManager.getEpic(taskManager.getTaskKey("Учеба")));
-                    System.out.println(taskManager.getTask(taskManager.getTaskKey("Домашние дела")));
-                    System.out.println(taskManager.getSubtask(taskManager.getTaskKey("Спринт 3")));
-                    System.out.println(taskManager.getSubtask(taskManager.getTaskKey("Спринт 4")));
+                    System.out.println(inMemoryTaskManager.getEpic(inMemoryTaskManager.getTaskKey("Учеба")));
+                    System.out.println(inMemoryTaskManager.getTask(inMemoryTaskManager.getTaskKey("Домашние дела")));
+                    System.out.println(inMemoryTaskManager.getSubtask(inMemoryTaskManager.getTaskKey("Спринт 3")));
+                    System.out.println(inMemoryTaskManager.getSubtask(inMemoryTaskManager.getTaskKey("Спринт 4")));
+                    System.out.println(inMemoryTaskManager.getHistory());
                     break;
                 case 4:
-                    taskManager.addEpic(epic);
-                    taskManager.addSubtask(subTask, "Учеба");
-                    taskManager.addTask(task);
+                    inMemoryTaskManager.addEpic(epic);
+                    inMemoryTaskManager.addSubtask(subTask, "Учеба");
+                    inMemoryTaskManager.addTask(task);
                     break;
                 case 5:
-                    taskManager.updateEpic(epic, "IN_PROGRESS");
-                    taskManager.updateTask(task, "IN_PROGRESS");
-                    taskManager.updateSubtask(subTask, "IN_PROGRESS");
+                    inMemoryTaskManager.updateEpic(epic, Status.IN_PROGRESS);
+                    inMemoryTaskManager.updateTask(task, Status.IN_PROGRESS);
+                    inMemoryTaskManager.updateSubtask(subTask, Status.IN_PROGRESS);
                     break;
                 case 6:
-                    taskManager.removeSubtask(taskManager.getTaskKey("Спринт 3"));
-                    taskManager.removeEpic(taskManager.getTaskKey("Учеба"));
-                    taskManager.removeTask(taskManager.getTaskKey("Домашние дела"));
+                    inMemoryTaskManager.removeSubtask(inMemoryTaskManager.getTaskKey("Спринт 3"));
+                    inMemoryTaskManager.removeEpic(inMemoryTaskManager.getTaskKey("Учеба"));
+                    inMemoryTaskManager.removeTask(inMemoryTaskManager.getTaskKey("Домашние дела"));
                     break;
                 case 7:
-                    System.out.println(taskManager.getEpicSubtasksList("Учеба"));
+                    System.out.println(inMemoryTaskManager.getEpicSubtasksList("Учеба"));
                     break;
                 case 0:
                     break;
