@@ -56,8 +56,7 @@ public class Task {
     @Override
     public String toString() {
         return "Task{" +
-                "type='" + "Task" + '\'' +
-                ", name='" + name + '\'' +
+                "name='" + name + '\'' +
                 ", description.length='" + description.length() + '\'' +
                 ", status='" + status + '\'' +
                 '}';

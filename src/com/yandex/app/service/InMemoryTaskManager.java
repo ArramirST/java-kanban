@@ -197,8 +197,9 @@ public class InMemoryTaskManager implements TaskManager {
     public Task getTask(int identifier) {
         for (Integer key : tasks.keySet()) {
             if (key == identifier) {
-                historyManager.add(tasks.get(key));
-                return tasks.get(key);
+                Task chekedTask = tasks.get(key);
+                historyManager.add(chekedTask);
+                return chekedTask;
             }
         }
         return null;
@@ -208,8 +209,9 @@ public class InMemoryTaskManager implements TaskManager {
     public Task getEpic(int identifier) {
         for (Integer key : epics.keySet()) {
             if (key == identifier) {
-                historyManager.add(epics.get(key));
-                return epics.get(key);
+                Task chekedTask = epics.get(key);
+                historyManager.add(chekedTask);
+                return chekedTask;
             }
         }
         return null;
@@ -219,8 +221,9 @@ public class InMemoryTaskManager implements TaskManager {
     public Task getSubtask(int identifier) {
         for (Integer key : subtasks.keySet()) {
             if (key == identifier) {
-                historyManager.add(subtasks.get(key));
-                return subtasks.get(key);
+                Task chekedTask = subtasks.get(key);
+                historyManager.add(chekedTask);
+                return chekedTask;
             }
         }
         return null;
