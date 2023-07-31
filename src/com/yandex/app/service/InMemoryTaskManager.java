@@ -6,6 +6,7 @@ import com.yandex.app.model.Task;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 
 public class InMemoryTaskManager implements TaskManager {
@@ -231,22 +232,28 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public void removeTask(int identifier) {
+        historyManager.remove(identifier);
         tasks.remove(identifier);
     }
 
     @Override
     public void removeEpic(int identifier) {
-        for (Integer id : subtasks.keySet()) {
-            if (subtasks.get(id).getAttachment()==identifier) {
-                subtasks.remove(id);
+        if (identifier == 0) return;
+        for (Iterator<Subtask> iterator = subtasks.values().iterator(); iterator.hasNext(); ) {
+            Subtask subtask = iterator.next();
+            if (subtask.getAttachment() == identifier) {
+                historyManager.remove(subtask.getIdentifier());
+                iterator.remove();
             }
         }
         epics.get(identifier).removeSubtasksId();
+        historyManager.remove(identifier);
         epics.remove(identifier);
     }
 
     @Override
     public void removeSubtask(int identifier) {
+        historyManager.remove(identifier);
         subtasks.remove(identifier);
         for (Integer key : epics.keySet()) {
             if (epics.get(key).getSubtasks().contains(identifier)) {
