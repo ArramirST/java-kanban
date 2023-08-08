@@ -17,13 +17,18 @@ public class InMemoryTaskManager implements TaskManager {
         return identifier;
     }
 
+    protected void setIdentifier(int identifier) {
+        this.identifier = identifier;
+    }
+
     @Override
     public int identifier() {
         return ++identifier;
     }
-    private HashMap<Integer, Task>  tasks = new HashMap<>();
-    private HashMap<Integer, Epic>  epics = new HashMap<>();
-    private HashMap<Integer, Subtask>  subtasks = new HashMap<>();
+
+    protected HashMap<Integer, Task> tasks = new HashMap<>();
+    protected HashMap<Integer, Epic> epics = new HashMap<>();
+    protected HashMap<Integer, Subtask> subtasks = new HashMap<>();
     HistoryManager historyManager = Managers.getDefaultHistory();
 
     @Override
@@ -153,20 +158,30 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public void removeTasks() {
+        for (Integer key : tasks.keySet()) {
+            historyManager.remove(key);
+        }
         tasks.clear();
     }
 
     @Override
     public void removeEpics() {
         for (Integer key : epics.keySet()) {
+            historyManager.remove(key);
             epics.get(key).removeSubtasksId();
         }
         epics.clear();
+        for (Integer key : subtasks.keySet()) {
+            historyManager.remove(key);
+        }
         subtasks.clear();
     }
 
     @Override
     public void removeSubtasks() {
+        for (Integer key : subtasks.keySet()) {
+            historyManager.remove(key);
+        }
         subtasks.clear();
         for (Epic epic : epics.values()) {
             epic.getSubtasks().clear();

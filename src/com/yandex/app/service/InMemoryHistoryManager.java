@@ -42,8 +42,7 @@ public class InMemoryHistoryManager implements HistoryManager {
 
     public void linkLast(Task task) {
         final Node oldLast = last;
-        final Node newNode = new Node(oldLast, task, null); /* Ссылка на prev нод у нового нода
-                                                                    указывается при вызове его конструктора */
+        final Node newNode = new Node(oldLast, task, null);
         last = newNode;
         if (oldLast == null) {
             first = newNode;
@@ -81,7 +80,7 @@ public class InMemoryHistoryManager implements HistoryManager {
             last.next = null;
             return;
         }
-        node.next.prev = node.prev; // Как и в случае с предыдущим замечанием, случай с серединой списка имеется в коде
+        node.next.prev = node.prev;
         node.prev.next = node.next;
     }
 }

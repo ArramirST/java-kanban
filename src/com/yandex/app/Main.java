@@ -3,6 +3,7 @@ package com.yandex.app;
 import com.yandex.app.model.Epic;
 import com.yandex.app.model.Subtask;
 import com.yandex.app.model.Task;
+import com.yandex.app.service.FileBackedTasksManager;
 import com.yandex.app.service.Managers;
 import com.yandex.app.service.Status;
 import com.yandex.app.service.TaskManager;
@@ -10,7 +11,7 @@ import com.yandex.app.service.TaskManager;
 import java.util.Scanner;
 
 public class Main {
-    public static TaskManager inMemoryTaskManager = Managers.getDefault();
+    public static FileBackedTasksManager inMemoryTaskManager = Managers.getDefault();
     public static Scanner scanner = new Scanner(System.in);
     public static Epic epic = new Epic("Учеба", "Нужно учиться");
     public static Subtask subTask = new Subtask("Спринт 3", "Выполнить до вечера");
@@ -50,6 +51,9 @@ public class Main {
                 case 8:
                     historyTest();
                     break;
+                case 9:
+                    loadTest();
+                    break;
                 case 0:
                     break;
                 default:
@@ -71,6 +75,7 @@ public class Main {
         System.out.println("6 - Удаление по идентификатору");
         System.out.println("7 - Получение всех списков задач отдельного Epic");
         System.out.println("8 - Проверить работу истории доступа");
+        System.out.println("9 - Проверить возможность загрузки из сохранения");
         System.out.println("0 - Завершение работы");
     }
 
@@ -147,4 +152,9 @@ public class Main {
 
     }
 
+    public static void loadTest() {
+        System.out.println("История первого файла: " + inMemoryTaskManager.getHistory());
+        TaskManager loadedTaskManager = Managers.loadFromFile(FileBackedTasksManager.pathOfSavedTasks);
+        System.out.println("История нового файла: " + loadedTaskManager.getHistory());
+    }
 }

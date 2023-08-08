@@ -32,10 +32,6 @@ public class Subtask extends Task {
 
     @Override
     public String toString() {
-        return "Task{" +
-                "name='" + name + '\'' +
-                ", description.length='" + description.length() + '\'' +
-                ", status='" + status + '\'' +
-                '}';
+        return "SUBTASK," + name + "," + status + "," + description + "," + epicId;
     }
 }

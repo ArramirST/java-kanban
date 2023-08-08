@@ -1,10 +1,17 @@
 package com.yandex.app.service;
 
-public final class Managers {
-    private Managers() {}
+import java.nio.file.Path;
 
-    public static TaskManager getDefault() {
-        return new InMemoryTaskManager();
+public final class Managers {
+    private Managers() {
+    }
+
+    public static FileBackedTasksManager getDefault() {
+        return new FileBackedTasksManager();
+    }
+
+    public static FileBackedTasksManager loadFromFile(Path path) {
+        return new FileBackedTasksManager(path);
     }
 
     public static HistoryManager getDefaultHistory() {
