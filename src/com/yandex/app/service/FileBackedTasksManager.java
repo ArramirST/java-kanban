@@ -19,45 +19,11 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     static String savedTasks = "history.txt";
     public static Path pathOfSavedTasks = Paths.get(savedTasks);
 
-    public FileBackedTasksManager() {
-    }
 
     public FileBackedTasksManager(Path path) {
         try {
             String data = Files.readString(path);
-            String[] split = data.split("\n");
-            for (int i = 0; i < (split.length - 2); i++) {
-                fromString(split[i]);
-            }
-            List<Integer> historyId = historyFromString(split[split.length - 1]);
-            int maxId = 0;
-            for (Integer id : historyId) {
-                for (Integer key : tasks.keySet()) {
-                    if (key.equals(id)) {
-                        historyManager.add(tasks.get(key));
-                    }
-                    if (key > maxId) {
-                        maxId = key;
-                    }
-                }
-                for (Integer key : epics.keySet()) {
-                    if (key.equals(id)) {
-                        historyManager.add(epics.get(key));
-                    }
-                    if (key > maxId) {
-                        maxId = key;
-                    }
-                }
-                for (Integer key : subtasks.keySet()) {
-                    if (key.equals(id)) {
-                        historyManager.add(subtasks.get(key));
-                    }
-                    if (key > maxId) {
-                        maxId = key;
-                    }
-                }
-            }
-            setIdentifier(maxId);
+            setCurrentId(data);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -65,15 +31,15 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
 
     private void save() {
         try (Writer fileWriter = new FileWriter(savedTasks)) {
-            fileWriter.write("id,type,name,status,description,epic\n");
+            fileWriter.write("id','type','name','status','description','epic\n");
             for (Integer id : tasks.keySet()) {
-                fileWriter.write(id + "," + tasks.get(id).toString() + ",\n");
+                fileWriter.write(id + "','" + tasks.get(id).toString() + "','\n");
             }
             for (Integer id : epics.keySet()) {
-                fileWriter.write(id + "," + epics.get(id).toString() + ",\n");
+                fileWriter.write(id + "','" + epics.get(id).toString() + "','\n");
             }
             for (Integer id : subtasks.keySet()) {
-                fileWriter.write(id + "," + subtasks.get(id).toString() + "\n");
+                fileWriter.write(id + "','" + subtasks.get(id).toString() + "\n");
             }
             fileWriter.write("\n");
             fileWriter.write(historyToString(historyManager));
@@ -84,32 +50,44 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
 
 
     private void fromString(String value) {
-        String[] split = value.split(",");
+        String[] split = value.split("','");
         switch (split[1]) {
             case ("TASK"):
-                addTask(new Task(split[2], split[4]), Integer.parseInt(split[0]));
-                if (split[3].equals("IN_PROGRESS")) {
-                    tasks.get(Integer.parseInt(split[0])).setStatus(Status.IN_PROGRESS);
-                } else if (split[3].equals("DONE")) {
-                    tasks.get(Integer.parseInt(split[0])).setStatus(Status.DONE);
-                }
+                fromTask(split);
                 break;
             case ("EPIC"):
-                addEpic(new Epic(split[2], split[4]), Integer.parseInt(split[0]));
-                if (split[3].equals("IN_PROGRESS")) {
-                    epics.get(Integer.parseInt(split[0])).setStatus(Status.IN_PROGRESS);
-                } else if (split[3].equals("DONE")) {
-                    epics.get(Integer.parseInt(split[0])).setStatus(Status.DONE);
-                }
+                fromEpic(split);
                 break;
             case ("SUBTASK"):
-                addSubtask(new Subtask(split[2], split[4]), Integer.parseInt(split[5]), Integer.parseInt(split[0]));
-                if (split[3].equals("IN_PROGRESS")) {
-                    subtasks.get(Integer.parseInt(split[0])).setStatus(Status.IN_PROGRESS);
-                } else if (split[3].equals("DONE")) {
-                    subtasks.get(Integer.parseInt(split[0])).setStatus(Status.DONE);
-                }
+                fromSubTask(split);
                 break;
+        }
+    }
+
+    private void fromTask(String[] split) {
+        addTask(new Task(split[2], split[4]), Integer.parseInt(split[0]));
+        if (split[3].equals("IN_PROGRESS")) {
+            tasks.get(Integer.parseInt(split[0])).setStatus(Status.IN_PROGRESS);
+        } else if (split[3].equals("DONE")) {
+            tasks.get(Integer.parseInt(split[0])).setStatus(Status.DONE);
+        }
+    }
+
+    private void fromEpic(String[] split) {
+        addEpic(new Epic(split[2], split[4]), Integer.parseInt(split[0]));
+        if (split[3].equals("IN_PROGRESS")) {
+            epics.get(Integer.parseInt(split[0])).setStatus(Status.IN_PROGRESS);
+        } else if (split[3].equals("DONE")) {
+            epics.get(Integer.parseInt(split[0])).setStatus(Status.DONE);
+        }
+    }
+
+    private void fromSubTask(String[] split) {
+        addSubtask(new Subtask(split[2], split[4]), Integer.parseInt(split[5]), Integer.parseInt(split[0]));
+        if (split[3].equals("IN_PROGRESS")) {
+            subtasks.get(Integer.parseInt(split[0])).setStatus(Status.IN_PROGRESS);
+        } else if (split[3].equals("DONE")) {
+            subtasks.get(Integer.parseInt(split[0])).setStatus(Status.DONE);
         }
     }
 
@@ -169,6 +147,47 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
                 epic.addSubtasksId(identifier);
             }
         }
+    }
+
+    private void setCurrentId(String data) {
+        String[] split = data.split("\n");
+        for (int i = 0; i < (split.length - 2); i++) {
+            fromString(split[i]);
+        }
+        List<Integer> historyId = historyFromString(split[split.length - 1]);
+        int maxId = findMaxId(historyId);
+        setIdentifier(maxId);
+    }
+
+    private int findMaxId(List<Integer> historyId) {
+        int maxId = 0;
+        for (Integer id : historyId) {
+            for (Integer key : tasks.keySet()) {
+                if (key.equals(id)) {
+                    historyManager.add(tasks.get(key));
+                }
+                if (key > maxId) {
+                    maxId = key;
+                }
+            }
+            for (Integer key : epics.keySet()) {
+                if (key.equals(id)) {
+                    historyManager.add(epics.get(key));
+                }
+                if (key > maxId) {
+                    maxId = key;
+                }
+            }
+            for (Integer key : subtasks.keySet()) {
+                if (key.equals(id)) {
+                    historyManager.add(subtasks.get(key));
+                }
+                if (key > maxId) {
+                    maxId = key;
+                }
+            }
+        }
+        return maxId;
     }
 
     @Override
@@ -235,7 +254,8 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     }
 
     @Override
-    public Task getEpic(int identifier) {
+    public Task getEpic(int identifier) {/*Пока в коде нет разницы между конкретными реализациями Task,
+                                          я оставил более универсальный вариант возвращаемого объекта*/
         try {
             return super.getEpic(identifier);
         } finally {

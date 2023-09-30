@@ -125,7 +125,7 @@ public class Main {
         System.out.println("История до добавления задач: " + inMemoryTaskManager.getHistory());
         Task task1 = new Task("Прогуляться", "Выйти на улицу");
         Task task2 = new Task("Позвонить родителям", "Пообщаться");
-        Epic epic1 = new Epic("Сходить в магазин", "Купить продукты");
+        Epic epic1 = new Epic("Сходить в магазин, за свежими продуктами", "Купить продукты");
         Epic epic2 = new Epic("Приготовить ужин", "Нужны продукты");
         Subtask subTask1 = new Subtask("Купить мясо", "В мясном отделе");
         Subtask subTask2 = new Subtask("Купить молоко", "В молочном отделе");
@@ -134,10 +134,10 @@ public class Main {
         inMemoryTaskManager.addTask(task2);
         inMemoryTaskManager.addEpic(epic1);
         inMemoryTaskManager.addEpic(epic2);
-        inMemoryTaskManager.addSubtask(subTask1, "Сходить в магазин");
-        inMemoryTaskManager.addSubtask(subTask2, "Сходить в магазин");
-        inMemoryTaskManager.addSubtask(subTask3, "Сходить в магазин");
-        inMemoryTaskManager.getEpic(inMemoryTaskManager.getTaskKey("Сходить в магазин"));
+        inMemoryTaskManager.addSubtask(subTask1, "Сходить в магазин, за свежими продуктами");
+        inMemoryTaskManager.addSubtask(subTask2, "Сходить в магазин, за свежими продуктами");
+        inMemoryTaskManager.addSubtask(subTask3, "Сходить в магазин, за свежими продуктами");
+        inMemoryTaskManager.getEpic(inMemoryTaskManager.getTaskKey("Сходить в магазин, за свежими продуктами"));
         inMemoryTaskManager.getTask(inMemoryTaskManager.getTaskKey("Прогуляться"));
         inMemoryTaskManager.getTask(inMemoryTaskManager.getTaskKey("Позвонить родителям"));
         inMemoryTaskManager.getSubtask(inMemoryTaskManager.getTaskKey("Купить мясо"));
@@ -147,7 +147,7 @@ public class Main {
         System.out.println("История после добавления задач: " + inMemoryTaskManager.getHistory());
         inMemoryTaskManager.removeSubtask(inMemoryTaskManager.getTaskKey("Купить мясо"));
         System.out.println("История после удаления подзадачи: " + inMemoryTaskManager.getHistory());
-        inMemoryTaskManager.removeEpic(inMemoryTaskManager.getTaskKey("Сходить в магазин"));
+        inMemoryTaskManager.removeEpic(inMemoryTaskManager.getTaskKey("Сходить в магазин, за свежими продуктами"));
         System.out.println("История после удаления эпика: " + inMemoryTaskManager.getHistory());
 
     }

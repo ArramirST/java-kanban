@@ -55,6 +55,6 @@ public class Task {
 
     @Override
     public String toString() {
-        return "TASK," + name + "," + status + "," + description;
+        return "TASK','" + name + "','" + status + "','" + description;
     }
 }
