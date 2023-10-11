@@ -10,6 +10,8 @@ import java.io.Writer;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,7 +33,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
 
     private void save() {
         try (Writer fileWriter = new FileWriter(savedTasks)) {
-            fileWriter.write("id','type','name','status','description','epic\n");
+            fileWriter.write("id','type','name','status','description','start time','duration','epic\n");
             for (Integer id : tasks.keySet()) {
                 fileWriter.write(id + "','" + tasks.get(id).toString() + "','\n");
             }
@@ -66,6 +68,10 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
 
     private void fromTask(String[] split) {
         addTask(new Task(split[2], split[4]), Integer.parseInt(split[0]));
+        try {
+            setTaskDate(Integer.parseInt(split[0]), LocalDateTime.parse(split[5]), Integer.parseInt(split[6]));
+        } catch (DateTimeParseException | NullPointerException e) {
+        }
         if (split[3].equals("IN_PROGRESS")) {
             tasks.get(Integer.parseInt(split[0])).setStatus(Status.IN_PROGRESS);
         } else if (split[3].equals("DONE")) {
@@ -83,7 +89,11 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     }
 
     private void fromSubTask(String[] split) {
-        addSubtask(new Subtask(split[2], split[4]), Integer.parseInt(split[5]), Integer.parseInt(split[0]));
+        addSubtask(new Subtask(split[2], split[4]), Integer.parseInt(split[7]), Integer.parseInt(split[0]));
+        try {
+            setSubtaskDate(Integer.parseInt(split[0]), LocalDateTime.parse(split[5]), Integer.parseInt(split[6]));
+        } catch (DateTimeParseException | NullPointerException e) {
+        }
         if (split[3].equals("IN_PROGRESS")) {
             subtasks.get(Integer.parseInt(split[0])).setStatus(Status.IN_PROGRESS);
         } else if (split[3].equals("DONE")) {
@@ -203,7 +213,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     }
 
     @Override
-    public void addSubtask(Subtask subtask, String epicName) {
+    public void addSubtask(Subtask subtask, String epicName) throws IllegalArgumentException {
         super.addSubtask(subtask, epicName);
         save();
     }
@@ -254,8 +264,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     }
 
     @Override
-    public Task getEpic(int identifier) {/*Пока в коде нет разницы между конкретными реализациями Task,
-                                          я оставил более универсальный вариант возвращаемого объекта*/
+    public Task getEpic(int identifier) {
         try {
             return super.getEpic(identifier);
         } finally {

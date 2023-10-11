@@ -8,6 +8,7 @@ import com.yandex.app.service.Managers;
 import com.yandex.app.service.Status;
 import com.yandex.app.service.TaskManager;
 
+import java.time.LocalDateTime;
 import java.util.Scanner;
 
 public class Main {
@@ -54,6 +55,12 @@ public class Main {
                 case 9:
                     loadTest();
                     break;
+                case 10:
+                    timeTest();
+                    break;
+                case 11:
+                    sortedListTest();
+                    break;
                 case 0:
                     break;
                 default:
@@ -76,6 +83,8 @@ public class Main {
         System.out.println("7 - Получение всех списков задач отдельного Epic");
         System.out.println("8 - Проверить работу истории доступа");
         System.out.println("9 - Проверить возможность загрузки из сохранения");
+        System.out.println("10 - Проверить возможность установки дат");
+        System.out.println("11 - Получить сортированный список задач");
         System.out.println("0 - Завершение работы");
     }
 
@@ -149,7 +158,26 @@ public class Main {
         System.out.println("История после удаления подзадачи: " + inMemoryTaskManager.getHistory());
         inMemoryTaskManager.removeEpic(inMemoryTaskManager.getTaskKey("Сходить в магазин, за свежими продуктами"));
         System.out.println("История после удаления эпика: " + inMemoryTaskManager.getHistory());
+    }
 
+    public static void timeTest() {
+        inMemoryTaskManager.addTask(task);
+        inMemoryTaskManager.setTaskDate(inMemoryTaskManager.getTaskKey("Домашние дела"),
+                LocalDateTime.now(), 10);
+        System.out.println(inMemoryTaskManager.getTask(inMemoryTaskManager.getTaskKey("Домашние дела")));
+    }
+
+    public static void sortedListTest() {
+        inMemoryTaskManager.addTask(task);
+        inMemoryTaskManager.setTaskDate(inMemoryTaskManager.getTaskKey("Домашние дела"),
+                LocalDateTime.now(), 10);
+        Epic epic1 = new Epic("Сходить в магазин, за свежими продуктами", "Купить продукты");
+        Subtask subTask1 = new Subtask("Купить мясо", "В мясном отделе");
+        inMemoryTaskManager.addEpic(epic1);
+        inMemoryTaskManager.addSubtask(subTask1, "Сходить в магазин, за свежими продуктами");
+        inMemoryTaskManager.setSubtaskDate(inMemoryTaskManager.getTaskKey("Купить мясо"),
+                LocalDateTime.now().plusHours(1), 10);
+        System.out.println(inMemoryTaskManager.getPrioritizedTasks());
     }
 
     public static void loadTest() {

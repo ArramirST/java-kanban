@@ -2,6 +2,8 @@ package com.yandex.app.model;
 
 import com.yandex.app.service.Status;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 public class Task {
@@ -9,6 +11,8 @@ public class Task {
     protected String description;
     protected Status status = Status.NEW;
     protected int identifier;
+    protected int duration;
+    protected LocalDateTime startTime;
 
     public Task(String name, String description) {
         this.name = name;
@@ -40,6 +44,26 @@ public class Task {
         this.identifier = identifier;
     }
 
+    public int getDuration() {
+        return duration;
+    }
+
+    public LocalDateTime getStartTime() {
+        return startTime;
+    }
+
+    public void setDuration(int duration) {
+        this.duration = duration;
+    }
+
+    public void setStartTime(LocalDateTime startTime) {
+        this.startTime = startTime;
+    }
+
+    public LocalDateTime getEndTime() {
+        return startTime.plus(Duration.ofMinutes(duration));
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -55,6 +79,6 @@ public class Task {
 
     @Override
     public String toString() {
-        return "TASK','" + name + "','" + status + "','" + description;
+        return "TASK','" + name + "','" + status + "','" + description + "','" + startTime + "','" + duration;
     }
 }

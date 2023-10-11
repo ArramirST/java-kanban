@@ -1,6 +1,4 @@
-id','type','name','status','description','epic
-46','TASK','Прогуляться','NEW','Выйти на улицу','
-47','TASK','Позвонить родителям','NEW','Пообщаться','
-49','EPIC','Приготовить ужин','NEW','Нужны продукты','
+id','type','name','status','description','start time','duration','epic
+1','TASK','Домашние дела','NEW','Помыть посуду','null','0','
 
-46,47,49,
+1,
