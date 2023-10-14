@@ -18,8 +18,8 @@ import java.util.List;
 
 public class FileBackedTasksManager extends InMemoryTaskManager {
 
-    static String savedTasks = "history.txt";
-    public static Path pathOfSavedTasks = Paths.get(savedTasks);
+    private static String savedTasks = "history.txt";
+    private static Path pathOfSavedTasks = Paths.get(savedTasks);
 
 
     public FileBackedTasksManager(Path path) {

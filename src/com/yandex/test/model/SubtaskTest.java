@@ -1,5 +1,7 @@
-package com.yandex.app.model;
+package com.yandex.test.model;
 
+import com.yandex.app.model.Epic;
+import com.yandex.app.model.Subtask;
 import com.yandex.app.service.FileBackedTasksManager;
 import com.yandex.app.service.Managers;
 import com.yandex.app.service.Status;

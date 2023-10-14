@@ -30,10 +30,10 @@ public class InMemoryTaskManager implements TaskManager {
         return ++identifier;
     }
 
-    protected HashMap<Integer, Task> tasks = new HashMap<>();
-    protected HashMap<Integer, Epic> epics = new HashMap<>();
-    protected HashMap<Integer, Subtask> subtasks = new HashMap<>();
-    HistoryManager historyManager = Managers.getDefaultHistory();
+    public HashMap<Integer, Task> tasks = new HashMap<>();
+    public HashMap<Integer, Epic> epics = new HashMap<>();
+    public HashMap<Integer, Subtask> subtasks = new HashMap<>();
+    public HistoryManager historyManager = Managers.getDefaultHistory();
     protected TreeSet<Task> sortedTasks = new TreeSet<>((Task task1, Task task2) -> {
         if (task1.getStartTime() == null) {
             return 1;
@@ -404,8 +404,7 @@ public class InMemoryTaskManager implements TaskManager {
             try {
                 if (isOverlap(sortedTask.getStartTime(), sortedTask.getEndTime(), startTime, duration)
                         && sortedTask.getIdentifier() != id) {
-                    System.out.println("Совпадение времени выполнения задач");
-                    return;
+                    throw new IllegalArgumentException("Время выполнения задач пересекается");
                 }
             } catch (NullPointerException e) {
 
@@ -422,8 +421,7 @@ public class InMemoryTaskManager implements TaskManager {
             try {
                 if (isOverlap(sortedTask.getStartTime(), sortedTask.getEndTime(), startTime, duration)
                         && sortedTask.getIdentifier() != id) {
-                    System.out.println("Совпадение времени выполнения задач");
-                    return;
+                    throw new IllegalArgumentException("Время выполнения задач пересекается");
                 }
             } catch (NullPointerException e) {
 

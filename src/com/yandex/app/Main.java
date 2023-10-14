@@ -8,6 +8,8 @@ import com.yandex.app.service.Managers;
 import com.yandex.app.service.Status;
 import com.yandex.app.service.TaskManager;
 
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.Scanner;
 
@@ -182,7 +184,9 @@ public class Main {
 
     public static void loadTest() {
         System.out.println("История первого файла: " + inMemoryTaskManager.getHistory());
-        TaskManager loadedTaskManager = Managers.loadFromFile(FileBackedTasksManager.pathOfSavedTasks);
+        String savedTasks = "history.txt";
+        Path pathOfSavedTasks = Paths.get(savedTasks);
+        TaskManager loadedTaskManager = Managers.loadFromFile(pathOfSavedTasks);
         System.out.println("История нового файла: " + loadedTaskManager.getHistory());
     }
 }
