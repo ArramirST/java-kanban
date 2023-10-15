@@ -1,10 +1,8 @@
-package com.yandex.test.service;
+package com.yandex.app.service;
 
 import com.yandex.app.model.Epic;
 import com.yandex.app.model.Subtask;
 import com.yandex.app.model.Task;
-import com.yandex.app.service.FileBackedTasksManager;
-import com.yandex.app.service.Managers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

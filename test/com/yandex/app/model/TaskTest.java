@@ -1,6 +1,5 @@
-package com.yandex.test.model;
+package com.yandex.app.model;
 
-import com.yandex.app.model.Task;
 import com.yandex.app.service.FileBackedTasksManager;
 import com.yandex.app.service.Managers;
 import com.yandex.app.service.Status;
