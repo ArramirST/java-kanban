@@ -13,6 +13,10 @@ public final class Managers {
         return new FileBackedTasksManager(Paths.get("history.txt"));
     }
 
+    public static HttpTaskManager getServerDefault() {
+        return new HttpTaskManager("http://localhost:");
+    }
+
     public static FileBackedTasksManager getDefaultClear() {
         try {
             Files.deleteIfExists(Paths.get("history.txt"));

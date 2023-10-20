@@ -3,28 +3,45 @@ package com.yandex.app;
 import com.yandex.app.model.Epic;
 import com.yandex.app.model.Subtask;
 import com.yandex.app.model.Task;
-import com.yandex.app.service.FileBackedTasksManager;
+import com.yandex.app.server.KVServer;
+import com.yandex.app.service.HttpTaskManager;
 import com.yandex.app.service.Managers;
 import com.yandex.app.service.Status;
-import com.yandex.app.service.TaskManager;
 
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.Scanner;
 
 public class Main {
-    public static FileBackedTasksManager inMemoryTaskManager = Managers.getDefault();
+    public static HttpTaskManager inMemoryTaskManager = Managers.getServerDefault();
     public static Scanner scanner = new Scanner(System.in);
     public static Epic epic = new Epic("Учеба", "Нужно учиться");
     public static Subtask subTask = new Subtask("Спринт 3", "Выполнить до вечера");
     public static Task task = new Task("Домашние дела", "Помыть посуду");
+    public static KVServer kvServer;
+    public static String urlString = "http://localhost:";
 
     public static void main(String[] args) {
 
         inMemoryTaskManager.addEpic(epic);
         inMemoryTaskManager.addSubtask(subTask, "Учеба");
         subTask = new Subtask("Спринт 4", "Выполнить до конца недели");
+        /*HttpTaskServer httpTaskServer = new HttpTaskServer();
+        try {
+            httpTaskServer.startServer(inMemoryTaskManager);
+            System.out.println("Сервер работает");
+            kvServer = new KVServer();
+            kvServer.start();
+        } catch (IOException e) {
+            System.out.println(123);;
+        }*/
+        /*try {
+            kvTaskClient = new KVTaskClient(urlString);
+            Gson gson = new Gson();
+            kvTaskClient.put("5", gson.toJson(task));
+            System.out.println(kvTaskClient.load("5"));
+        } catch (IOException|InterruptedException e) {
+            System.out.println("Ошибка клиента");;
+        }*/
         int choice;
         while (true) {
             printMenu();
@@ -123,6 +140,10 @@ public class Main {
     }
 
     public static void removeTaskById() {
+        inMemoryTaskManager.addTask(new Task("Домашние дела", "Помыть посуду"));
+        inMemoryTaskManager.addEpic(new Epic("Учеба", "Нужно учиться"));
+        inMemoryTaskManager.addSubtask(new Subtask("Спринт 3", "Выполнить до вечера"),
+                "Учеба");
         inMemoryTaskManager.removeSubtask(inMemoryTaskManager.getTaskKey("Спринт 3"));
         inMemoryTaskManager.removeEpic(inMemoryTaskManager.getTaskKey("Учеба"));
         inMemoryTaskManager.removeTask(inMemoryTaskManager.getTaskKey("Домашние дела"));
@@ -184,9 +205,7 @@ public class Main {
 
     public static void loadTest() {
         System.out.println("История первого файла: " + inMemoryTaskManager.getHistory());
-        String savedTasks = "history.txt";
-        Path pathOfSavedTasks = Paths.get(savedTasks);
-        TaskManager loadedTaskManager = Managers.loadFromFile(pathOfSavedTasks);
+        HttpTaskManager loadedTaskManager = Managers.getServerDefault();
         System.out.println("История нового файла: " + loadedTaskManager.getHistory());
     }
 }

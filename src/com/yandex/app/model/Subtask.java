@@ -6,6 +6,7 @@ public class Subtask extends Task {
     private int epicId;
     public Subtask(String name, String description) {
         super(name, description);
+        this.type = "Subtask";
     }
 
     public int getAttachment() {

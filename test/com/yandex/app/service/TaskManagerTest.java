@@ -56,7 +56,7 @@ class TaskManagerTest {
         Task task = new Task("Домашние дела", "Помыть посуду");
         inMemoryTaskManager.addTask(task);
         inMemoryTaskManager.addTask(task);
-        List<String> tasks = inMemoryTaskManager.getTaskList();
+        List<Task> tasks = inMemoryTaskManager.getTaskList();
         assertEquals(1, tasks.size(), "Возник дубликат задачи");
     }
 
@@ -75,7 +75,7 @@ class TaskManagerTest {
         Epic epic = new Epic("Учеба", "Нужно учиться");
         inMemoryTaskManager.addEpic(epic);
         inMemoryTaskManager.addEpic(epic);
-        List<String> epics = inMemoryTaskManager.getEpicList();
+        List<Task> epics = inMemoryTaskManager.getEpicList();
         assertEquals(1, epics.size(), "Возник дубликат эпика");
     }
 
@@ -98,7 +98,7 @@ class TaskManagerTest {
         Subtask subTask1 = new Subtask("Спринт 3", "Выполнить до вечера");
         inMemoryTaskManager.addSubtask(subTask1, "Учеба");
         inMemoryTaskManager.addSubtask(subTask1, "Учеба");
-        List<String> subtasks = inMemoryTaskManager.getSubtaskList();
+        List<Task> subtasks = inMemoryTaskManager.getSubtaskList();
         assertEquals(1, subtasks.size(), "Возник дубликат подзадачи");
     }
 

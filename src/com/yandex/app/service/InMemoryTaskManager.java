@@ -16,7 +16,6 @@ public class InMemoryTaskManager implements TaskManager {
         return bugTracker;
     }
 
-    @Override
     public int getIdentifier() {
         return identifier;
     }
@@ -25,7 +24,6 @@ public class InMemoryTaskManager implements TaskManager {
         this.identifier = identifier;
     }
 
-    @Override
     public int identifier() {
         return ++identifier;
     }
@@ -53,7 +51,7 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public void addTask(Task task) {
         for (Integer key : tasks.keySet()) {
-            if (tasks.get(key).equals(task)) {
+            if (tasks.get(key).getName().equals(task.getName())) {
                 return;
             }
         }
@@ -65,7 +63,7 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public void addEpic(Epic epic) {
         for (Integer key : epics.keySet()) {
-            if (epics.get(key).equals(epic)) {
+            if (epics.get(key).getName().equals(epic.getName())) {
                 return;
             }
         }
@@ -76,7 +74,7 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public void addSubtask(Subtask subtask, String epicName) throws IllegalArgumentException {
         for (Integer key : subtasks.keySet()) {
-            if (subtasks.get(key).equals(subtask)) {
+            if (subtasks.get(key).getName().equals(subtask.getName())) {
                 return;
             }
         }
@@ -173,30 +171,18 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public List<String> getTaskList() {
-        List<String> list = new ArrayList<>();
-        for (Task value : tasks.values()) {
-            list.add(value.getName());
-        }
-        return list;
+    public List<Task> getTaskList() {
+        return new ArrayList<>(tasks.values());
     }
 
     @Override
-    public List<String> getEpicList() {
-        List<String> list = new ArrayList<>();
-        for (Epic value : epics.values()) {
-            list.add(value.getName());
-        }
-        return list;
+    public List<Task> getEpicList() {
+        return new ArrayList<>(epics.values());
     }
 
     @Override
-    public List<String> getSubtaskList() {
-        List<String> list = new ArrayList<>();
-        for (Subtask value : subtasks.values()) {
-            list.add(value.getName());
-        }
-        return list;
+    public List<Task> getSubtaskList() {
+        return new ArrayList<>(subtasks.values());
     }
 
     @Override
@@ -289,14 +275,33 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public void removeTask(int identifier) {
+    public void removeTask(int identifier) throws IllegalArgumentException {
+        boolean isExist = false;
+        for (Integer id : tasks.keySet()) {
+            if (id == identifier) {
+                isExist = true;
+                break;
+            }
+        }
+        if (!isExist) {
+            throw new IllegalArgumentException("Задачи с таким id не существует");
+        }
         historyManager.remove(identifier);
         tasks.remove(identifier);
     }
 
     @Override
-    public void removeEpic(int identifier) {
-        if (identifier == 0) return;
+    public void removeEpic(int identifier) throws IllegalArgumentException {
+        boolean isExist = false;
+        for (Integer id : epics.keySet()) {
+            if (id == identifier) {
+                isExist = true;
+                break;
+            }
+        }
+        if (!isExist) {
+            throw new IllegalArgumentException("Задачи с таким id не существует");
+        }
         for (Iterator<Subtask> iterator = subtasks.values().iterator(); iterator.hasNext(); ) {
             Subtask subtask = iterator.next();
             if (subtask.getAttachment() == identifier) {
@@ -310,12 +315,22 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public void removeSubtask(int identifier) {
+    public void removeSubtask(int identifier) throws IllegalArgumentException {
+        boolean isExist = false;
+        for (Integer id : subtasks.keySet()) {
+            if (id == identifier) {
+                isExist = true;
+                break;
+            }
+        }
+        if (!isExist) {
+            throw new IllegalArgumentException("Задачи с таким id не существует");
+        }
         historyManager.remove(identifier);
         subtasks.remove(identifier);
         for (Integer key : epics.keySet()) {
             if (epics.get(key).getSubtasks().contains(identifier)) {
-                epics.get(key).getSubtasks().remove((Integer)identifier);
+                epics.get(key).getSubtasks().remove((Integer) identifier);
             }
             updateEpicStatus(epics.get(key));
         }
@@ -334,15 +349,14 @@ public class InMemoryTaskManager implements TaskManager {
         return list;
     }
 
-    @Override
     public void updateEpicStatus(Epic epic) {
         int newCount = 0;
         int inProgressCount = 0;
         int doneCount = 0;
-        for (Task task : tasks.values()) {
+        for (Subtask subtask : subtasks.values()) {
             for (Integer subtasksId : epic.getSubtasks()) {
-                if (task.getIdentifier()==subtasksId) {
-                    switch (task.getStatus()) {
+                if (subtask.getIdentifier() == subtasksId) {
+                    switch (subtask.getStatus()) {
                         case IN_PROGRESS:
                             inProgressCount++;
                             break;
@@ -365,7 +379,6 @@ public class InMemoryTaskManager implements TaskManager {
         }
     }
 
-    @Override
     public void updateEpicStatus(Subtask subtask) {
         int newCount = 0;
         int inProgressCount = 0;
@@ -399,6 +412,7 @@ public class InMemoryTaskManager implements TaskManager {
         return historyManager.getHistory();
     }
 
+    @Override
     public void setTaskDate(Integer id, LocalDateTime startTime, int duration) {
         for (Task sortedTask : sortedTasks) {
             try {
@@ -416,6 +430,7 @@ public class InMemoryTaskManager implements TaskManager {
         sortedTasks.add(tasks.get(id));
     }
 
+    @Override
     public void setSubtaskDate(Integer id, LocalDateTime startTime, int duration) {
         for (Task sortedTask : sortedTasks) {
             try {
@@ -458,6 +473,7 @@ public class InMemoryTaskManager implements TaskManager {
         }
     }
 
+    @Override
     public TreeSet<Task> getPrioritizedTasks() {
         return sortedTasks;
     }

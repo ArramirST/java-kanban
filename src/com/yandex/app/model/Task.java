@@ -13,10 +13,12 @@ public class Task {
     protected int identifier;
     protected int duration;
     protected LocalDateTime startTime;
+    protected String type;
 
     public Task(String name, String description) {
         this.name = name;
         this.description = description;
+        this.type = "Task";
     }
 
 
@@ -44,7 +46,7 @@ public class Task {
         this.identifier = identifier;
     }
 
-    public int getDuration() {
+    public Integer getDuration() {
         return duration;
     }
 
@@ -62,6 +64,14 @@ public class Task {
 
     public LocalDateTime getEndTime() {
         return startTime.plus(Duration.ofMinutes(duration));
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 
     @Override

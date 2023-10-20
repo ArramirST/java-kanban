@@ -27,7 +27,7 @@ class FileBackedTasksManagerTest {
     @Test
     public void shouldLoadEpic() {
         Epic epic = new Epic("Учеба", "Нужно учиться");
-        inMemoryTaskManager.addEpic(epic);
+        inMemoryTaskManager.addEpic(epic, 1);
         inMemoryTaskManager.getEpic(1);
         FileBackedTasksManager inMemoryTaskManager1 = Managers.getDefault();
         assertTrue(inMemoryTaskManager1.getHistory().toString()

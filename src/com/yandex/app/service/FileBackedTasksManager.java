@@ -31,7 +31,10 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         }
     }
 
-    private void save() {
+    public FileBackedTasksManager() {
+    }
+
+    protected void save() {
         try (Writer fileWriter = new FileWriter(savedTasks)) {
             fileWriter.write("id','type','name','status','description','start time','duration','epic\n");
             for (Integer id : tasks.keySet()) {
@@ -159,7 +162,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         }
     }
 
-    private void setCurrentId(String data) {
+    protected void setCurrentId(String data) {
         String[] split = data.split("\n");
         for (int i = 0; i < (split.length - 2); i++) {
             fromString(split[i]);
@@ -169,7 +172,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         setIdentifier(maxId);
     }
 
-    private int findMaxId(List<Integer> historyId) {
+    protected int findMaxId(List<Integer> historyId) {
         int maxId = 0;
         for (Integer id : historyId) {
             for (Integer key : tasks.keySet()) {
