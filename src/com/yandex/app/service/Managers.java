@@ -9,12 +9,12 @@ public final class Managers {
     private Managers() {
     }
 
-    public static FileBackedTasksManager getDefault() {
-        return new FileBackedTasksManager(Paths.get("history.txt"));
+    public static HttpTaskManager getDefault() {
+        return new HttpTaskManager("http://localhost:8078");
     }
 
-    public static HttpTaskManager getServerDefault() {
-        return new HttpTaskManager("http://localhost:");
+    public static HttpTaskManager getDefaultTest() {
+        return new HttpTaskManager("http://localhost:8079");
     }
 
     public static FileBackedTasksManager getDefaultClear() {

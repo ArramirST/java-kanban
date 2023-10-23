@@ -2,7 +2,10 @@ package com.yandex.app.service;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.yandex.app.converter.SubtaskDeserializer;
+import com.yandex.app.converter.SubtaskSerializer;
 import com.yandex.app.converter.TaskDeserializer;
 import com.yandex.app.converter.TaskSerializer;
 import com.yandex.app.model.Epic;
@@ -19,6 +22,8 @@ public class HttpTaskManager extends FileBackedTasksManager {
     private static final Gson gson = new GsonBuilder()
             .registerTypeAdapter(Task.class, new TaskSerializer())
             .registerTypeAdapter(Task.class, new TaskDeserializer())
+            .registerTypeAdapter(Subtask.class, new SubtaskDeserializer())
+            .registerTypeAdapter(Subtask.class, new SubtaskSerializer())
             .serializeNulls()
             .create();
     public static KVTaskClient kvTaskClient;
@@ -28,8 +33,7 @@ public class HttpTaskManager extends FileBackedTasksManager {
             kvTaskClient = new KVTaskClient(urlString);
             setCurrentId();
         } catch (IOException | InterruptedException e) {
-            System.out.println("Ошибка клиента");
-            ;
+            throw new RuntimeException(e);
         }
     }
 
@@ -71,8 +75,7 @@ public class HttpTaskManager extends FileBackedTasksManager {
     }
 
     protected void setCurrentId() {
-        tryFindTaskAndEpic(100);
-        tryFindSubtask(100);
+        loadTasksToMemory();
         try {
             String history = kvTaskClient.loadHistory();
             if (history == null) {
@@ -89,39 +92,31 @@ public class HttpTaskManager extends FileBackedTasksManager {
         }
     }
 
-    public void tryFindTaskAndEpic(int count) {
-        for (int i = 1; i <= count; i++) {
-            try {
-                JsonObject TaskJO = kvTaskClient.load(Integer.toString(i)).getAsJsonObject();
-                if (TaskJO != null) {
-                    switch (TaskJO.get("type").getAsString()) {
-                        case ("Task"):
-                            Task task = gson.fromJson(TaskJO, Task.class);
-                            addTask(task, task.getIdentifier());
-                            break;
-                        case ("Epic"):
-                            Epic epic = gson.fromJson(TaskJO, Epic.class);
-                            addEpic(epic, epic.getIdentifier());
-                            break;
-                    }
+    public void loadTasksToMemory() {
+        try {
+            List<JsonElement> tasksList = kvTaskClient.load();
+            for (JsonElement jsonElement : tasksList) {
+                JsonObject taskJO = jsonElement.getAsJsonObject();
+                switch (taskJO.get("type").getAsString()) {
+                    case ("Task"):
+                        Task task = gson.fromJson(taskJO, Task.class);
+                        addTask(task, task.getIdentifier());
+                        break;
+                    case ("Epic"):
+                        Epic epic = gson.fromJson(taskJO, Epic.class);
+                        addEpic(epic, epic.getIdentifier());
+                        break;
                 }
-            } catch (IOException | InterruptedException e) {
             }
-        }
-    }
-
-    public void tryFindSubtask(int count) {
-        for (int i = 1; i <= count; i++) {
-            try {
-                JsonObject TaskJO = kvTaskClient.load(Integer.toString(i)).getAsJsonObject();
-                if (TaskJO != null) {
-                    if (TaskJO.get("type").getAsString().equals("Subtask")) {
-                        Subtask subtask = gson.fromJson(TaskJO, Subtask.class);
-                        addSubtask(subtask, subtask.getAttachment(), subtask.getIdentifier());
-                    }
+            for (JsonElement jsonElement : tasksList) {
+                JsonObject taskJO = jsonElement.getAsJsonObject();
+                if (taskJO.get("type").getAsString().equals("Subtask")) {
+                    Subtask subtask = gson.fromJson(taskJO, Subtask.class);
+                    addSubtask(subtask, taskJO.get("epicId").getAsInt(), subtask.getIdentifier());
                 }
-            } catch (IOException | InterruptedException e) {
             }
+        } catch (IOException | InterruptedException e) {
+            throw new RuntimeException(e);
         }
     }
 }

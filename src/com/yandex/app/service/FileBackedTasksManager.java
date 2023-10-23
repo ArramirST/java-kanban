@@ -49,7 +49,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
             fileWriter.write("\n");
             fileWriter.write(historyToString(historyManager));
         } catch (IOException e) {
-            System.out.println("Не удалось записать файл");
+            throw new RuntimeException();
         }
     }
 

@@ -1,19 +1,32 @@
 package com.yandex.app.service;
 
-import com.yandex.app.model.Epic;
-import com.yandex.app.model.Task;
+import com.yandex.app.server.KVServer;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.io.IOException;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class FileBackedTasksManagerTest {
-    public static FileBackedTasksManager inMemoryTaskManager;
+    static KVServer kvServer;
+    public static HttpTaskManager inMemoryTaskManager;
 
     @BeforeEach
     public void beforeEach() {
-        inMemoryTaskManager = Managers.getDefaultClear();
+        try {
+            kvServer = new KVServer();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        kvServer.start();
+        inMemoryTaskManager = Managers.getDefault();
+    }
+
+    @AfterEach
+    void tearDown() {
+        kvServer.stop();
     }
 
     @Test
@@ -22,27 +35,5 @@ class FileBackedTasksManagerTest {
         assertEquals("[]",
                 inMemoryTaskManager1.getHistory().toString(),
                 "В чистой истории присутствуют посторонние задачи");
-    }
-
-    @Test
-    public void shouldLoadEpic() {
-        Epic epic = new Epic("Учеба", "Нужно учиться");
-        inMemoryTaskManager.addEpic(epic, 1);
-        inMemoryTaskManager.getEpic(1);
-        FileBackedTasksManager inMemoryTaskManager1 = Managers.getDefault();
-        assertTrue(inMemoryTaskManager1.getHistory().toString()
-                .contains("EPIC','Учеба','NEW','Нужно учиться"), "Эпик не загружается из истории");
-    }
-
-    @Test
-    public void shouldLoadEmptyMemoryAfterClear() {
-        FileBackedTasksManager inMemoryTaskManager1 = Managers.getDefault();
-        Task task = new Task("Домашние дела", "Помыть посуду");
-        inMemoryTaskManager.addTask(task);
-        inMemoryTaskManager.getTask(1);
-        inMemoryTaskManager.historyManager.remove(1);
-        assertEquals("[]",
-                inMemoryTaskManager1.getHistory().toString(),
-                "Функция удаления задач из истории не работает");
     }
 }

@@ -1,5 +1,6 @@
 package com.yandex.app.server;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 
@@ -8,10 +9,11 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.util.ArrayList;
+import java.util.List;
 
 public class KVTaskClient {
 
-    private static final int PORT = 8078;
     protected static String API_TOKEN;
     HttpClient client;
     String urlString;
@@ -21,10 +23,9 @@ public class KVTaskClient {
         this.urlString = urlString;
         URI uri = null;
         try {
-            uri = URI.create(urlString + PORT + "/register");
+            uri = URI.create(urlString + "/register");
         } catch (IllegalArgumentException e) {
-            System.out.println("Не читается URI");
-            System.out.println(urlString + PORT + "/register");
+            throw new IllegalArgumentException();
         }
 
         HttpRequest request = HttpRequest.newBuilder()
@@ -39,10 +40,9 @@ public class KVTaskClient {
     public void put(String key, String json) throws IOException, InterruptedException {
         URI uri = null;
         try {
-            uri = URI.create(urlString + PORT + "/save/" + key + "?API_TOKEN=" + API_TOKEN);
+            uri = URI.create(urlString + "/save/" + key + "?API_TOKEN=" + API_TOKEN);
         } catch (IllegalArgumentException e) {
-            System.out.println("Не читается URI");
-            System.out.println(urlString + PORT + "/save/" + key + "?API_TOKEN=" + API_TOKEN);
+            throw new IllegalArgumentException();
         }
 
         final HttpRequest.BodyPublisher body = HttpRequest.BodyPublishers.ofString(json);
@@ -58,10 +58,9 @@ public class KVTaskClient {
     public JsonElement load(String key) throws IOException, InterruptedException {
         URI uri = null;
         try {
-            uri = URI.create(urlString + PORT + "/load/" + key + "?API_TOKEN=" + API_TOKEN);
+            uri = URI.create(urlString + "/load/" + key + "?API_TOKEN=" + API_TOKEN);
         } catch (IllegalArgumentException e) {
-            System.out.println("Не читается URI");
-            System.out.println(urlString + PORT + "/load/" + key + "?API_TOKEN=" + API_TOKEN);
+            throw new IllegalArgumentException();
         }
         HttpRequest request = HttpRequest.newBuilder()
                 .GET()
@@ -72,13 +71,33 @@ public class KVTaskClient {
         return JsonParser.parseString(response.body());
     }
 
+    public List<JsonElement> load() throws IOException, InterruptedException {
+        URI uri = null;
+        try {
+            uri = URI.create(urlString + "/load/?API_TOKEN=" + API_TOKEN);
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException();
+        }
+        HttpRequest request = HttpRequest.newBuilder()
+                .GET()
+                .uri(uri)
+                .version(HttpClient.Version.HTTP_1_1)
+                .build();
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        List<JsonElement> tasksList = new ArrayList<>();
+        JsonArray jsonArray = JsonParser.parseString(response.body()).getAsJsonArray();
+        for (JsonElement jsonElement : jsonArray) {
+            tasksList.add(jsonElement);
+        }
+        return tasksList;
+    }
+
     public String loadHistory() throws IOException, InterruptedException {
         URI uri = null;
         try {
-            uri = URI.create(urlString + PORT + "/load/0?API_TOKEN=" + API_TOKEN);
+            uri = URI.create(urlString + "/load/0?API_TOKEN=" + API_TOKEN);
         } catch (IllegalArgumentException e) {
-            System.out.println("Не читается URI");
-            System.out.println(urlString + PORT + "/load/0?API_TOKEN=" + API_TOKEN);
+            throw new IllegalArgumentException();
         }
         HttpRequest request = HttpRequest.newBuilder()
                 .GET()
@@ -92,10 +111,9 @@ public class KVTaskClient {
     public String delete() throws IOException, InterruptedException {
         URI uri = null;
         try {
-            uri = URI.create(urlString + PORT + "/delete/?API_TOKEN=" + API_TOKEN);
+            uri = URI.create(urlString + "/delete/?API_TOKEN=" + API_TOKEN);
         } catch (IllegalArgumentException e) {
-            System.out.println("Не читается URI");
-            System.out.println(urlString + PORT + "/delete/?API_TOKEN=" + API_TOKEN);
+            throw new IllegalArgumentException();
         }
         HttpRequest request = HttpRequest.newBuilder()
                 .DELETE()

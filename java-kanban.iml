@@ -57,5 +57,6 @@
       </library>
     </orderEntry>
     <orderEntry type="library" exported="" name="gson-2.10.1" level="project" />
+    <orderEntry type="module" module-name="Server" scope="TEST" />
   </component>
 </module>

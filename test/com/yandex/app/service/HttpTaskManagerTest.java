@@ -3,6 +3,8 @@ package com.yandex.app.service;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
+import com.yandex.app.converter.SubtaskDeserializer;
+import com.yandex.app.converter.SubtaskSerializer;
 import com.yandex.app.converter.TaskDeserializer;
 import com.yandex.app.converter.TaskSerializer;
 import com.yandex.app.model.Epic;
@@ -24,6 +26,8 @@ class HttpTaskManagerTest {
     static Gson gson = new GsonBuilder()
             .registerTypeAdapter(Task.class, new TaskSerializer())
             .registerTypeAdapter(Task.class, new TaskDeserializer())
+            .registerTypeAdapter(Subtask.class, new SubtaskDeserializer())
+            .registerTypeAdapter(Subtask.class, new SubtaskSerializer())
             .serializeNulls()
             .create();
 
@@ -34,9 +38,8 @@ class HttpTaskManagerTest {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        ;
         kvServer.start();
-        inMemoryTaskManager = Managers.getServerDefault();
+        inMemoryTaskManager = Managers.getDefault();
     }
 
     @AfterEach
@@ -51,7 +54,7 @@ class HttpTaskManagerTest {
         inMemoryTaskManager.getEpic(1);
         inMemoryTaskManager.save();
         inMemoryTaskManager.epics.remove(1);
-        inMemoryTaskManager.tryFindTaskAndEpic(10);
+        inMemoryTaskManager.loadTasksToMemory();
         JsonObject TaskJO = kvTaskClient.load("1").getAsJsonObject();
         Epic loadedTask = gson.fromJson(TaskJO, Epic.class);
         assertEquals("Учеба", loadedTask.getName(), "Эпик не сохранятеся в памяти");
@@ -68,9 +71,9 @@ class HttpTaskManagerTest {
         inMemoryTaskManager.getTask(1);
         inMemoryTaskManager.getEpic(2);
         inMemoryTaskManager.getSubtask(3);
-        HttpTaskManager inMemoryTaskManager1 = Managers.getServerDefault();
-        assertEquals("[TASK','Домашние дела','NEW','Помыть посуду','null','0, EPIC','Учеба'" +
-                        ",'NEW','Нужно учиться','null','0, SUBTASK','Спринт 3','NEW','Выполнить до вечера','null','0','2]",
+        HttpTaskManager inMemoryTaskManager1 = Managers.getDefault();
+        assertEquals("[TASK','Домашние дела','NEW','Помыть посуду','null','0, EPIC','Учеба','" +
+                        "NEW','Нужно учиться','null','0, SUBTASK','Спринт 3','NEW','Выполнить до вечера','null','0','2]",
                 inMemoryTaskManager1.getHistory().toString(),
                 "История нового менеджера и старого не совпадает");
     }

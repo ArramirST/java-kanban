@@ -32,10 +32,9 @@ class KVTaskClientTest {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        ;
         kvServer.start();
         try {
-            kvTaskClient = new KVTaskClient("http://localhost:");
+            kvTaskClient = new KVTaskClient("http://localhost:8078");
         } catch (IOException | InterruptedException e) {
             throw new RuntimeException(e);
         }
